@@ -20,6 +20,7 @@ export const usersTable = pgTable("users", {
   cvFileName: text("cv_file_name"),
   cvAnalyzed: boolean("cv_analyzed").default(false),
   nafathVerified: boolean("nafath_verified").default(false),
+  authToken: text("auth_token"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useLogin } from "@workspace/api-client-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { setStoredToken } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -35,7 +36,8 @@ export default function LoginPage() {
       { data: { nationalId: values.nationalId, fullName: values.fullName, nafathVerified: values.nafathVerified } },
       {
         onSuccess: (res) => {
-          const r = res as { user: { id: number; nationalId: string; fullName: string; profileComplete: boolean; avatarInitials: string }; isNewUser?: boolean };
+          const r = res as { user: { id: number; nationalId: string; fullName: string; profileComplete: boolean; avatarInitials: string }; token?: string; isNewUser?: boolean };
+          if (r.token) setStoredToken(r.token);
           setUser(r.user);
           toast({ title: `مرحباً، ${r.user.fullName}`, description: "تم تسجيل الدخول بنجاح" });
           if (r.isNewUser) {

@@ -1,6 +1,30 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useGetMe, getGetMeQueryKey, useLogout } from "@workspace/api-client-react";
+import { useGetMe, getGetMeQueryKey, useLogout, setAuthTokenGetter } from "@workspace/api-client-react";
+
+const TOKEN_KEY = "sarh_auth_token";
+
+export function getStoredToken(): string | null {
+  try {
+    return localStorage.getItem(TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function setStoredToken(token: string | null): void {
+  try {
+    if (token) {
+      localStorage.setItem(TOKEN_KEY, token);
+    } else {
+      localStorage.removeItem(TOKEN_KEY);
+    }
+  } catch {
+    // ignore
+  }
+}
+
+setAuthTokenGetter(getStoredToken);
 
 interface AuthUser {
   id: number;
@@ -40,6 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (isError) {
       setUser(null);
+      setStoredToken(null);
     }
   }, [isError]);
 
@@ -47,6 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logoutMutation.mutate(undefined, {
       onSettled: () => {
         setUser(null);
+        setStoredToken(null);
         queryClient.clear();
       },
     });
