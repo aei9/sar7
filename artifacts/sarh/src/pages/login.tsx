@@ -12,8 +12,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, ShieldCheck } from "lucide-react";
 
 const loginSchema = z.object({
-  nationalId: z.string().min(10, "رقم السجل المدني يجب أن يكون 10 أرقام").max(10),
-  fullName: z.string().min(2, "يرجى إدخال الاسم الكامل"),
+  nationalId: z.string().min(1, "يرجى إدخال رقم السجل المدني"),
+  fullName: z.string().min(1, "يرجى إدخال الاسم الكامل"),
   nafathVerified: z.boolean(),
 });
 
@@ -81,7 +81,6 @@ export default function LoginPage() {
                         placeholder="أدخل رقم هويتك الوطنية"
                         data-testid="input-national-id"
                         className="text-right"
-                        maxLength={10}
                       />
                     </FormControl>
                     <FormMessage />

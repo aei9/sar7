@@ -22,9 +22,9 @@ export const HealthCheckResponse = zod.object({
 export const loginBodyNafathVerifiedDefault = false;
 
 export const LoginBody = zod.object({
-  "nationalId": zod.string().describe('Saudi national ID (السجل المدني)'),
-  "fullName": zod.string().describe('Full name in Arabic'),
-  "nafathVerified": zod.boolean().default(loginBodyNafathVerifiedDefault).describe('Whether Nafath verification was completed')
+  "nationalId": zod.string().min(1).describe('Saudi national ID (السجل المدني)'),
+  "fullName": zod.string().min(1).describe('Full name in Arabic'),
+  "nafathVerified": zod.boolean().optional().default(loginBodyNafathVerifiedDefault).describe('Whether Nafath verification was completed')
 })
 
 export const LoginResponse = zod.object({
@@ -71,7 +71,7 @@ export const GetProfileResponse = zod.object({
   "hobbies": zod.array(zod.string()).optional(),
   "languages": zod.array(zod.object({
   "name": zod.string(),
-  "level": zod.enum(['beginner', 'intermediate', 'advanced', 'native'])
+  "level": zod.string()
 })).optional(),
   "cvFileName": zod.string().nullish(),
   "cvAnalyzed": zod.boolean().optional(),
@@ -92,12 +92,12 @@ export const UpdateProfileBody = zod.object({
   "educationLevel": zod.string().optional(),
   "university": zod.string().optional(),
   "major": zod.string().optional(),
-  "gpa": zod.number().optional(),
+  "gpa": zod.coerce.number().optional().nullable(),
   "interests": zod.array(zod.string()).optional(),
   "hobbies": zod.array(zod.string()).optional(),
   "languages": zod.array(zod.object({
   "name": zod.string(),
-  "level": zod.enum(['beginner', 'intermediate', 'advanced', 'native'])
+  "level": zod.string()
 })).optional(),
   "desiredSkills": zod.array(zod.string()).optional()
 })
@@ -118,7 +118,7 @@ export const UpdateProfileResponse = zod.object({
   "hobbies": zod.array(zod.string()).optional(),
   "languages": zod.array(zod.object({
   "name": zod.string(),
-  "level": zod.enum(['beginner', 'intermediate', 'advanced', 'native'])
+  "level": zod.string()
 })).optional(),
   "cvFileName": zod.string().nullish(),
   "cvAnalyzed": zod.boolean().optional(),
@@ -162,8 +162,8 @@ export const GetSkillsResponseItem = zod.object({
   "id": zod.number(),
   "name": zod.string(),
   "category": zod.string(),
-  "type": zod.enum(['current', 'desired']),
-  "proficiencyLevel": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal('expert'),zod.literal(null)]).nullish(),
+  "type": zod.string(),
+  "proficiencyLevel": zod.string().nullish(),
   "verified": zod.boolean().optional()
 })
 export const GetSkillsResponse = zod.array(GetSkillsResponseItem)
@@ -173,9 +173,9 @@ export const GetSkillsResponse = zod.array(GetSkillsResponseItem)
  * @summary Add a skill
  */
 export const AddSkillBody = zod.object({
-  "name": zod.string(),
+  "name": zod.string().min(1),
   "category": zod.string().optional(),
-  "type": zod.enum(['current', 'desired']),
+  "type": zod.string().default('current'),
   "proficiencyLevel": zod.string().optional()
 })
 
@@ -322,7 +322,7 @@ export const GetCertificationsResponseItem = zod.object({
   "id": zod.number(),
   "title": zod.string(),
   "issuer": zod.string(),
-  "type": zod.enum(['academic', 'professional', 'language', 'government']),
+  "type": zod.string(),
   "score": zod.string().nullish(),
   "dateEarned": zod.string().nullish(),
   "expiryDate": zod.string().nullish(),
@@ -337,9 +337,9 @@ export const GetCertificationsResponse = zod.array(GetCertificationsResponseItem
  * @summary Add a certification
  */
 export const AddCertificationBody = zod.object({
-  "title": zod.string(),
-  "issuer": zod.string(),
-  "type": zod.enum(['academic', 'professional', 'language', 'government']),
+  "title": zod.string().min(1),
+  "issuer": zod.string().min(1),
+  "type": zod.string().default('professional'),
   "score": zod.string().optional(),
   "dateEarned": zod.string().optional(),
   "expiryDate": zod.string().optional(),
@@ -355,7 +355,7 @@ export const GetActivitiesResponseItem = zod.object({
   "id": zod.number(),
   "title": zod.string(),
   "organization": zod.string(),
-  "type": zod.enum(['university_club', 'external_center', 'volunteer', 'competition', 'internship']),
+  "type": zod.string(),
   "role": zod.string().nullish(),
   "startDate": zod.string().nullish(),
   "endDate": zod.string().nullish(),
@@ -370,9 +370,9 @@ export const GetActivitiesResponse = zod.array(GetActivitiesResponseItem)
  * @summary Add an activity with proof
  */
 export const AddActivityBody = zod.object({
-  "title": zod.string(),
-  "organization": zod.string(),
-  "type": zod.enum(['university_club', 'external_center', 'volunteer', 'competition', 'internship']),
+  "title": zod.string().min(1),
+  "organization": zod.string().min(1),
+  "type": zod.string().default('university_club'),
   "role": zod.string().optional(),
   "startDate": zod.string().optional(),
   "endDate": zod.string().optional(),
@@ -385,7 +385,7 @@ export const AddActivityBody = zod.object({
  * @summary Send message to AI career advisor chatbot
  */
 export const SendChatMessageBody = zod.object({
-  "message": zod.string(),
+  "message": zod.string().min(1),
   "context": zod.string().optional()
 })
 
